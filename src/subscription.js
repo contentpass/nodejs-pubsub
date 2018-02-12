@@ -299,15 +299,17 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   ackIds = arrify(ackIds);
 
   if (!this.isConnected_()) {
-    console.warn(JSON.stringify({
-      message: 'acknowledge_ non-streaming',
-      count: ackIds.length,
-      bytes: ackIds.reduce(function(sum, ackId) {
-        sum += ackId.length;
-        return sum;
-      }, 0),
-      ackIds: ackIds,
-    }));
+    if (this.userClosed_) {
+      console.warn(JSON.stringify({
+        message: 'acknowledge_ non-streaming',
+        count: ackIds.length,
+        bytes: ackIds.reduce(function(sum, ackId) {
+          sum += ackId.length;
+          return sum;
+        }, 0),
+        ackIds: ackIds,
+      }));
+    }
     promise = common.util.promisify(this.request).call(this, {
       client: 'SubscriberClient',
       method: 'acknowledge',
@@ -317,15 +319,17 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
       },
     });
   } else {
-    console.warn(JSON.stringify({
-      message: 'acknowledge_ streaming',
-      count: ackIds.length,
-      bytes: ackIds.reduce(function(sum, ackId) {
-        sum += ackId.length;
-        return sum;
-      }, 0),
-      ackIds: ackIds,
-    }));
+    if (this.userClosed_) {
+      console.warn(JSON.stringify({
+        message: 'acknowledge_ streaming',
+        count: ackIds.length,
+        bytes: ackIds.reduce(function(sum, ackId) {
+          sum += ackId.length;
+          return sum;
+        }, 0),
+        ackIds: ackIds,
+      }));
+    }
     promise = new Promise(function(resolve, reject) {
       self.connectionPool.acquire(connId, function(err, connection) {
         if (err) {
@@ -924,15 +928,17 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   ackIds = arrify(ackIds);
 
   if (!this.isConnected_()) {
-    console.warn(JSON.stringify({
-      message: 'modifyAckDeadline_ non-streaming',
-      count: ackIds.length,
-      bytes: ackIds.reduce(function(sum, ackId) {
-        sum += ackId.length;
-        return sum;
-      }, 0),
-      ackIds: ackIds,
-    }));
+    if (this.userClosed_) {
+      console.warn(JSON.stringify({
+        message: 'modifyAckDeadline_ non-streaming',
+        count: ackIds.length,
+        bytes: ackIds.reduce(function(sum, ackId) {
+          sum += ackId.length;
+          return sum;
+        }, 0),
+        ackIds: ackIds,
+      }));
+    }
     promise = common.util.promisify(this.request).call(this, {
       client: 'SubscriberClient',
       method: 'modifyAckDeadline',
@@ -943,15 +949,17 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
       },
     });
   } else {
-    console.warn(JSON.stringify({
-      message: 'modifyAckDeadline_ streaming',
-      count: ackIds.length,
-      bytes: ackIds.reduce(function(sum, ackId) {
-        sum += ackId.length;
-        return sum;
-      }, 0),
-      ackIds: ackIds,
-    }));
+    if (this.userClosed_) {
+      console.warn(JSON.stringify({
+        message: 'modifyAckDeadline_ streaming',
+        count: ackIds.length,
+        bytes: ackIds.reduce(function(sum, ackId) {
+          sum += ackId.length;
+          return sum;
+        }, 0),
+        ackIds: ackIds,
+      }));
+    }
     promise = new Promise(function(resolve, reject) {
       self.connectionPool.acquire(connId, function(err, connection) {
         if (err) {
