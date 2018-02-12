@@ -299,9 +299,10 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   ackIds = arrify(ackIds);
 
   if (!this.isConnected_()) {
-    if (this.userClosed_) {
+    if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'acknowledge_ non-streaming',
+        connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
           sum += ackId.length;
@@ -318,9 +319,10 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
       },
     });
   } else {
-    if (this.userClosed_) {
+    if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'acknowledge_ streaming',
+        connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
           sum += ackId.length;
@@ -926,9 +928,11 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   ackIds = arrify(ackIds);
 
   if (!this.isConnected_()) {
-    if (this.userClosed_) {
+    if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'modifyAckDeadline_ non-streaming',
+        deadline: deadline,
+        connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
           sum += ackId.length;
@@ -946,9 +950,11 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
       },
     });
   } else {
-    if (this.userClosed_) {
+    if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'modifyAckDeadline_ streaming',
+        deadline: deadline,
+        connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
           sum += ackId.length;
