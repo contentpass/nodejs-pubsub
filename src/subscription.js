@@ -307,7 +307,6 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
           sum += ackId.length;
           return sum;
         }, 0),
-        ackIds: ackIds,
       }));
     }
     promise = common.util.promisify(this.request).call(this, {
@@ -327,7 +326,6 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
           sum += ackId.length;
           return sum;
         }, 0),
-        ackIds: ackIds,
       }));
     }
     promise = new Promise(function(resolve, reject) {
@@ -936,7 +934,6 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
           sum += ackId.length;
           return sum;
         }, 0),
-        ackIds: ackIds,
       }));
     }
     promise = common.util.promisify(this.request).call(this, {
@@ -957,7 +954,6 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
           sum += ackId.length;
           return sum;
         }, 0),
-        ackIds: ackIds,
       }));
     }
     promise = new Promise(function(resolve, reject) {
