@@ -24,6 +24,7 @@ var is = require('is');
 var os = require('os');
 var snakeCase = require('lodash.snakecase');
 var util = require('util');
+var uuid = require('uuid');
 
 var ConnectionPool = require('./connection-pool.js');
 var Histogram = require('./histogram.js');
@@ -295,6 +296,7 @@ Subscription.prototype.ack_ = function(message) {
 Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   var self = this;
   var promise;
+  var acknowledgeInstanceId = uuid.v4();
 
   ackIds = arrify(ackIds);
 
@@ -302,6 +304,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
     if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'acknowledge_ non-streaming',
+        acknowledgeInstanceId: acknowledgeInstanceId,
         connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
@@ -322,6 +325,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
     if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'acknowledge_ streaming',
+        acknowledgeInstanceId: acknowledgeInstanceId,
         connId: connId,
         count: ackIds.length,
         bytes: ackIds.reduce(function(sum, ackId) {
@@ -343,6 +347,18 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   }
 
   return promise.catch(function(err) {
+    console.error(JSON.stringify({
+      message: 'acknowledge_ error',
+      acknowledgeInstanceId: acknowledgeInstanceId,
+      connId: connId,
+      count: ackIds.length,
+      bytes: ackIds.reduce(function(sum, ackId) {
+        sum += ackId.length;
+        return sum;
+      }, 0),
+      err: err,
+      errJson: JSON.stringify(err),
+    }));
     self.emit('error', err);
   });
 };
@@ -924,6 +940,7 @@ Subscription.prototype.listenForEvents_ = function() {
 Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var self = this;
   var promise;
+  var acknowledgeInstanceId = uuid.v4();
 
   ackIds = arrify(ackIds);
 
@@ -931,6 +948,7 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
     if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'modifyAckDeadline_ non-streaming',
+        acknowledgeInstanceId: acknowledgeInstanceId,
         deadline: deadline,
         connId: connId,
         count: ackIds.length,
@@ -953,6 +971,7 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
     if (this.userClosed_ && ackIds.length > 1) {
       console.warn(JSON.stringify({
         message: 'modifyAckDeadline_ streaming',
+        acknowledgeInstanceId: acknowledgeInstanceId,
         deadline: deadline,
         connId: connId,
         count: ackIds.length,
@@ -981,6 +1000,18 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   }
 
   return promise.catch(function(err) {
+    console.error(JSON.stringify({
+      message: 'acknowledge_ error',
+      acknowledgeInstanceId: acknowledgeInstanceId,
+      connId: connId,
+      count: ackIds.length,
+      bytes: ackIds.reduce(function(sum, ackId) {
+        sum += ackId.length;
+        return sum;
+      }, 0),
+      err: err,
+      errJson: JSON.stringify(err),
+    }));
     self.emit('error', err);
   });
 };
