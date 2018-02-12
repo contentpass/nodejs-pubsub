@@ -1118,6 +1118,10 @@ Subscription.prototype.openConnection_ = function() {
 
   this.isOpen = true;
 
+  console.warn(JSON.stringify({
+    message: 'openConnection_',
+  }));
+
   pool.on('error', function(err) {
     self.emit('error', err);
   });
@@ -1136,6 +1140,9 @@ Subscription.prototype.openConnection_ = function() {
   });
 
   pool.once('connected', function() {
+    console.warn(JSON.stringify({
+      message: 'openConnection_ -> connected',
+    }));
     self.flushQueues_();
   });
 };
