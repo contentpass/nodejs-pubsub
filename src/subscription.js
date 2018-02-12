@@ -402,12 +402,23 @@ Subscription.prototype.close = function(callback) {
   this.userClosed_ = true;
 
   var inventory = this.inventory_;
+  console.warn(JSON.stringify({
+    message: 'subscription.close()',
+    leases: inventory.lease.length,
+    bytes: inventory.bytes,
+  }));
   inventory.lease.length = inventory.bytes = 0;
 
   clearTimeout(this.leaseTimeoutHandle_);
   this.leaseTimeoutHandle_ = null;
 
+  console.warn(JSON.stringify({
+    message: 'subscription.close() now flushing queues',
+  }));
   this.flushQueues_().then(function() {
+    console.warn(JSON.stringify({
+      message: 'subscription.close() flushed queues',
+    }));
     self.closeConnection_(callback);
   });
 };
@@ -640,6 +651,12 @@ Subscription.prototype.flushQueues_ = function() {
   var acks = this.inventory_.ack;
   var nacks = this.inventory_.nack;
 
+  console.warn(JSON.stringify({
+    message: 'flushQueues_',
+    acks: acks.length,
+    nacks: nacks.length,
+  }));
+
   if (!acks.length && !nacks.length) {
     return Promise.resolve();
   }
@@ -650,6 +667,11 @@ Subscription.prototype.flushQueues_ = function() {
     requests.push(
       this.acknowledge_(acks).then(function() {
         self.inventory_.ack = [];
+        console.warn(JSON.stringify({
+          message: 'flushQueues_ done with acks',
+          acks: acks.length,
+          nacks: nacks.length,
+        }));
       })
     );
   }
@@ -658,6 +680,11 @@ Subscription.prototype.flushQueues_ = function() {
     requests.push(
       this.modifyAckDeadline_(nacks, 0).then(function() {
         self.inventory_.nack = [];
+        console.warn(JSON.stringify({
+          message: 'flushQueues_ done with nacks',
+          acks: acks.length,
+          nacks: nacks.length,
+        }));
       })
     );
   }
